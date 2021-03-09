@@ -1,4 +1,6 @@
 import * as http from 'http'
+import path from 'path'
+import fs from 'fs'
 // eslint-disable-next-line node/no-deprecated-api
 import { parse } from 'url'
 import * as zlib from 'zlib'
@@ -345,6 +347,19 @@ export class TestServer {
           }))
         })
         req.pipe(parser)
+      }
+
+      if (p === '/file-sample.png') {
+        const filePath = path.join(__dirname, 'sample.png')
+        const stat = fs.statSync(filePath)
+
+        res.writeHead(200, {
+          'Content-Type': 'image/png',
+          'Content-Length': stat.size
+        })
+
+        const readStream = fs.createReadStream(filePath)
+        readStream.pipe(res)
       }
     }
   }

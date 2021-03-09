@@ -2161,6 +2161,33 @@ const createTestSuite = (useElectronNet) => {
             expect(res.headers.cookie).to.equal(undefined)
           })
       })
+
+      it('should handle the content-type header successfully', async function () {
+        // url = `${base}file-sample.png`
+        // going to test server does not reproduce the error, so tried an external image instead that causes the problem
+        url = 'https://www.buraktargac.com/img/pattern.png'
+        const res1 = await fetch(url, { useElectronNet: true })
+
+        expect(res1.status).to.equal(200)
+        expect(res1.headers.get('content-type')).to.equal('image/png')
+
+        const res2 = await fetch(url, { useElectronNet: true })
+
+        expect(res2.status).to.equal(200)
+        expect(res2.headers.get('content-type')).to.equal('image/png')
+
+        // using two separate fetch blocks that run in parallel does not cause errors as well, but
+        // for error demonstration I commented out them
+        // fetch(url).then(res => {
+        //   expect(res.status).to.equal(200)
+        //   expect(res.headers.get('content-type')).to.equal('image/png')
+        // })
+        //
+        // fetch(url).then(res => {
+        //   expect(res.status).to.equal(200)
+        //   expect(res.headers.get('content-type')).to.equal('image/png')
+        // })
+      })
     }
   })
 
